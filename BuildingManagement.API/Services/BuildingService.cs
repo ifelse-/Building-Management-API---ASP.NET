@@ -1,26 +1,39 @@
 using BuildingManagement.API.Entities;
 using BuildingManagement.API.Interfaces;
+using BuildingManagement.API.Data;
 
 namespace BuildingManagement.API.Services;
 
 public class BuildingService : IBuildingService
 {
-    // This is a private field — an in-memory list acting as fake database for now
-    private readonly List<Building> _buildings = new();
+    // Private fields go at the TOP of the class, before the constructor
+    private readonly ApplicationDbContext _context;
 
-    public List<Building> GetAll()
-        {
-            return _buildings;
-        }
+    // Constructor
+    public BuildingService(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+
+    public IEnumerable<Building> GetAll()
+    {
+        // Pulls all rows from Database
+        return _context.Buildings.ToList();
+    }
 
     public Building? GetById(int id)
-        {
-            return _buildings.FirstOrDefault(x => x.Id == id);
-        }
+    {   
+        // Returns null if not found
+        return _context.Buildings.FirstOrDefault(b => b.Id == id);
+    }
 
-    public void Create(Building building)
-        {
-            building.Id = _buildings.Count + 1;
-            _buildings.Add(building);
-        }
+    public async Task<Building> Create(Building building)
+    {
+        // Adds entity
+        // Persists to database
+        // Returns created object
+        _context.Buildings.Add(building);
+        await _context.SaveChangesAsync();
+        return building;
+    }
 }
