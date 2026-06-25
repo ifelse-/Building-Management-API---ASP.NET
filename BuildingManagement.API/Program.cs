@@ -1,3 +1,6 @@
+using BuildingManagement.API.Interfaces;
+using BuildingManagement.API.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Register services

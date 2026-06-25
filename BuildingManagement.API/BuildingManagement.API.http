@@ -1,6 +1,15 @@
 @BuildingManagement_ApiHostAddress = http://localhost:5247
 
-GET {{BuildingManagement_ApiHostAddress}}/
+GET {{BuildingManagement_ApiHostAddress}}/api/buildings
 Accept: application/json
 
 ###
+
+POST http://localhost:5247/api/buildings
+Content-Type: application/json
+
+{
+    "name": "Downtown Plaza",
+    "address": "123 Main Street",
+    "numberOfUnits": 50
+}

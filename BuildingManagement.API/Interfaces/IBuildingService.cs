@@ -6,6 +6,6 @@ public interface IBuildingService
 {
     List<Building> GetAll();
     Building? GetById(int id);
-    void Create(Building building)
+    void Create(Building building);
 }
 
