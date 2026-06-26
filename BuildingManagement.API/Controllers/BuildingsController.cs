@@ -38,7 +38,7 @@ public class BuildingsController : ControllerBase
 
     // POST: api/buildings
     [HttpPost]
-    public IActionResult Create(CreateBuildingDto dto)
+    public async Task<IActionResult> Create(CreateBuildingDto dto)
         {
         var building = new Building
         {
@@ -47,7 +47,7 @@ public class BuildingsController : ControllerBase
             NumberOfUnits = dto.NumberOfUnits
         };
 
-        _buildingService.Create(building);
+        await _buildingService.Create(building);
 
         return Ok(building);
     }
