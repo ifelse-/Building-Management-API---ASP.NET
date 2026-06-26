@@ -31,6 +31,7 @@ public class BuildingService : IBuildingService
         return _context.Buildings.FirstOrDefault(b => b.Id == id);
     }
 
+    // Create Building Date
     public async Task<Building> Create(Building building)
     {
         // Adds entity
@@ -41,7 +42,7 @@ public class BuildingService : IBuildingService
         return building;
     }
 
-
+    // Update Building Date
     public async Task<Building?> Update(int id, Building updatedBuilding)
     {
         var existing = await _context.Buildings.FirstOrDefaultAsync(b => b.Id == id);
@@ -56,5 +57,20 @@ public class BuildingService : IBuildingService
         await _context.SaveChangesAsync();
 
         return existing;
+    }
+
+    // Create Building Date
+    public async Task<bool> Delete(int id)
+    {
+        var existing = await _context.Buildings.FirstOrDefaultAsync(b => b.Id == id);
+
+        if (existing == null)
+            return false;
+
+        _context.Buildings.Remove(existing);
+
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }

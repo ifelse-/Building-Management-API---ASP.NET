@@ -36,6 +36,23 @@ public class BuildingsController : ControllerBase
         return Ok(building);
     }
 
+
+    // POST: api/buildings
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateBuildingDto dto)
+        {
+        var building = new Building
+        {
+            Name = dto.Name,
+            Address = dto.Address,
+            NumberOfUnits = dto.NumberOfUnits
+        };
+
+        await _buildingService.Create(building);
+
+        return Ok(building);
+    }
+
     // Update: api/buildings/1
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, CreateBuildingDto dto)
@@ -55,19 +72,15 @@ public class BuildingsController : ControllerBase
         return Ok(result);
     }
 
-    // POST: api/buildings
-    [HttpPost]
-    public async Task<IActionResult> Create(CreateBuildingDto dto)
-        {
-        var building = new Building
-        {
-            Name = dto.Name,
-            Address = dto.Address,
-            NumberOfUnits = dto.NumberOfUnits
-        };
+    // Delete: api/buildings/1
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _buildingService.Delete(id);
 
-        await _buildingService.Create(building);
+        if (!result)
+            return NotFound();
 
-        return Ok(building);
+        return NoContent();
     }
 }
