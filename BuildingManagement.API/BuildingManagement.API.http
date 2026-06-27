@@ -9,9 +9,9 @@ POST {{BuildingManagement_ApiHostAddress}}/api/buildings
 Content-Type: application/json
 
 {
-    "name": "Downtown Plaza",
-    "address": "123 Main Street",
-    "numberOfUnits": 50
+    "name": "Marvin Gardens",
+    "address": "100 West Street",
+    "numberOfUnits": 10
 }
 
 ### PUT/UPDATE

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using BuildingManagement.API.Entities;
 using BuildingManagement.API.Interfaces;
 using BuildingManagement.API.DTOs;
@@ -10,10 +11,14 @@ namespace BuildingManagement.API.Controllers;
 public class BuildingsController : ControllerBase
 {
     private readonly IBuildingService _buildingService;
+    private readonly ILogger<BuildingsController> _logger;
 
-    public BuildingsController(IBuildingService buildingService)
+    public BuildingsController(
+        IBuildingService buildingService,
+        ILogger<BuildingsController> logger)
     {
         _buildingService = buildingService;
+        _logger = logger;
     }
 
     // GET: api/buildings
@@ -21,6 +26,8 @@ public class BuildingsController : ControllerBase
     public IActionResult GetAll()
     {
         var buildings = _buildingService.GetAll();
+        _logger.LogInformation("Getting all buildings.");
+
         return Ok(buildings);
     }
 
@@ -29,10 +36,11 @@ public class BuildingsController : ControllerBase
     public IActionResult GetById(int id)
     {
         var building = _buildingService.GetById(id);
-
+        
         if (building == null)
             return NotFound();
 
+        _logger.LogInformation("Getting building with ID {BuildingId}", id);
         return Ok(building);
     }
 
@@ -40,7 +48,12 @@ public class BuildingsController : ControllerBase
     // POST: api/buildings
     [HttpPost]
     public async Task<IActionResult> Create(CreateBuildingDto dto)
+    {
+        if (!ModelState.IsValid)
         {
+            return BadRequest(ModelState);
+        }
+
         var building = new Building
         {
             Name = dto.Name,
@@ -50,6 +63,7 @@ public class BuildingsController : ControllerBase
 
         await _buildingService.Create(building);
 
+        _logger.LogInformation("Creating building {BuildingName}", dto.Name);
         return Ok(building);
     }
 
@@ -69,6 +83,7 @@ public class BuildingsController : ControllerBase
         if (result == null)
             return NotFound();
 
+        _logger.LogInformation("Updating building {BuildingName}", id);
         return Ok(result);
     }
 
