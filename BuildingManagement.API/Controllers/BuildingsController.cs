@@ -40,14 +40,14 @@ public class BuildingsController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
-        var building = _buildingService.GetById(id);
+        var result = _buildingService.GetById(id);
         
-        if (building == null)
+        if (!result.IsSuccess)
         {
             return NotFound(new ApiResponse<Building>
             {
-                Success = false,
-                Message = "Building not found.",
+                Success = result.IsSuccess,
+                Message = result.Message,
                 Data = null
             });
         }
@@ -56,10 +56,14 @@ public class BuildingsController : ControllerBase
 
         return Ok(new ApiResponse<Building>
         {
-            Success = true,
-            Message = "Building retrieved successfully.",
-            Data = building
+            Success = result.IsSuccess,
+            Message = result.Message,
+            Data = result.Data
         });
+
+        //return result.IsSuccess
+           // ? Ok(ApiResponse.Success(result.Data, result.Message))
+           // : NotFound(ApiResponse.Fail(result.Message));
     }
 
 
@@ -83,13 +87,23 @@ public class BuildingsController : ControllerBase
 
         _logger.LogInformation("Creating building {BuildingName}", dto.Name);
 
-        var createdBuilding = await _buildingService.Create(building);
+        var result = await _buildingService.Create(building);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new ApiResponse<Building>
+            {
+                Success = result.IsSuccess,
+                Message = result.Message,
+                Data = null
+            });
+        }
 
         return Ok(new ApiResponse<Building>
         {
-            Success = true,
-            Message = "Building created successfully.",
-            Data = createdBuilding
+            Success = result.IsSuccess,
+            Message = result.Message,
+            Data = result.Data
         });
     }
 
@@ -106,12 +120,12 @@ public class BuildingsController : ControllerBase
 
         var result = await _buildingService.Update(id, updated);
 
-        if (result == null)
+        if (!result.IsSuccess)
         {
             return NotFound(new ApiResponse<Building>
             {
-                Success = false,
-                Message = "Building not found.",
+                Success = result.IsSuccess,
+                Message = result.Message,
                 Data = null
             });
         }
@@ -120,9 +134,9 @@ public class BuildingsController : ControllerBase
 
         return Ok(new ApiResponse<Building>
         {
-            Success = true,
-            Message = "Building updated successfully.",
-            Data = result
+            Success = result.IsSuccess,
+            Message = result.Message,
+            Data = result.Data
         });
     }
 
@@ -132,12 +146,12 @@ public class BuildingsController : ControllerBase
     {
         var result = await _buildingService.Delete(id);
 
-        if (!result)
+        if (!result.IsSuccess)
         {
             return NotFound(new ApiResponse<Building>
             {
-                Success = false,
-                Message = "Building not found.",
+                Success = result.IsSuccess,
+                Message = result.Message,
                 Data = null
             });
         }
@@ -148,9 +162,9 @@ public class BuildingsController : ControllerBase
 
         return Ok(new ApiResponse<bool>
         {
-            Success = true,
-            Message = "Building deleted successfully.",
-            Data = true
+            Success = result.IsSuccess,
+            Message = result.Message,
+            Data = result.Data
         });
     }
 }

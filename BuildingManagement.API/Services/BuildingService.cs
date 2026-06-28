@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using BuildingManagement.API.Entities;
 using BuildingManagement.API.Interfaces;
 using BuildingManagement.API.Data;
+using BuildingManagement.API.Common;
 
 namespace BuildingManagement.API.Services;
 
@@ -25,52 +26,60 @@ public class BuildingService : IBuildingService
         return _context.Buildings.ToList();
     }
 
-    public Building? GetById(int id)
+    // Get Building by Id
+    public Result<Building> GetById(int id)
     {   
         // Returns null if not found
-        return _context.Buildings.FirstOrDefault(b => b.Id == id);
+        var building = _context.Buildings.FirstOrDefault(b => b.Id == id);
+        if (building == null)
+        {
+            return Result<Building>.Failure("Building not found");
+        }
+        return Result<Building>.Success(building, "Building retrieved successfully");
     }
 
     // Create Building Date
-    public async Task<Building> Create(Building building)
+    public async Task<Result<Building>> Create(Building building)
     {
         // Adds entity
         // Persists to database
         // Returns created object
         _context.Buildings.Add(building);
         await _context.SaveChangesAsync();
-        return building;
+        //return building;
+        return Result<Building>.Success(building, "Building created successfully");
     }
 
     // Update Building Date
-    public async Task<Building?> Update(int id, Building updatedBuilding)
+    public async Task<Result<Building>> Update(int id, Building updatedBuilding)
     {
         var existing = await _context.Buildings.FirstOrDefaultAsync(b => b.Id == id);
 
         if (existing == null)
-            return null;
+        {
+            return Result<Building>.Failure("Building not found");
+        }
 
         existing.Name = updatedBuilding.Name;
         existing.Address = updatedBuilding.Address;
         existing.NumberOfUnits = updatedBuilding.NumberOfUnits;
 
         await _context.SaveChangesAsync();
-
-        return existing;
+        return Result<Building>.Success(existing, "Building updated successfully");
     }
 
-    // Create Building Date
-    public async Task<bool> Delete(int id)
+    // Delete Building Date
+    public async Task <Result<bool>> Delete(int id)
     {
         var existing = await _context.Buildings.FirstOrDefaultAsync(b => b.Id == id);
 
         if (existing == null)
-            return false;
+        {
+            return Result<bool>.Failure("Building not found");
+        }
 
         _context.Buildings.Remove(existing);
-
         await _context.SaveChangesAsync();
-
-        return true;
+        return Result<bool>.Success(true, "Building deleted successfully");
     }
 }

@@ -2,13 +2,14 @@ namespace BuildingManagement.API.Interfaces;
 
 using BuildingManagement.API.Entities;
 using System.Threading.Tasks;
+using BuildingManagement.API.Common;
 
 public interface IBuildingService
 {
     IEnumerable<Building> GetAll();
-    Building? GetById(int id);
-    Task<Building> Create(Building building);
-    Task<Building?> Update(int id, Building building);
-    Task<bool> Delete(int id);
+    Result<Building> GetById(int id);
+    Task<Result<Building>> Create(Building building);
+    Task<Result<Building>> Update(int id, Building updatedBuilding);
+    Task <Result<bool>> Delete(int id);
 }
 
