@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using BuildingManagement.API.Entities;
 using BuildingManagement.API.Interfaces;
 using BuildingManagement.API.DTOs;
+using BuildingManagement.API.Models;
 
 namespace BuildingManagement.API.Controllers;
 
@@ -27,7 +28,12 @@ public class BuildingsController : ControllerBase
     {
         var buildings = _buildingService.GetAll();
         _logger.LogInformation("Getting all buildings.");
-        return Ok(buildings);
+        return Ok(new ApiResponse<IEnumerable<Building>>
+        {
+            Success = true,
+            Message = "Buildings retrieved successfully.",
+            Data = buildings
+        });
     }
 
     // GET: api/buildings/1
@@ -37,10 +43,23 @@ public class BuildingsController : ControllerBase
         var building = _buildingService.GetById(id);
         
         if (building == null)
-            return NotFound();
+        {
+            return NotFound(new ApiResponse<Building>
+            {
+                Success = false,
+                Message = "Building not found.",
+                Data = null
+            });
+        }
 
         _logger.LogInformation("Getting building with ID {BuildingId}", id);
-        return Ok(building);
+
+        return Ok(new ApiResponse<Building>
+        {
+            Success = true,
+            Message = "Building retrieved successfully.",
+            Data = building
+        });
     }
 
 
@@ -60,10 +79,18 @@ public class BuildingsController : ControllerBase
             NumberOfUnits = dto.NumberOfUnits
         };
 
-        await _buildingService.Create(building);
+        // await _buildingService.Create(building);
 
         _logger.LogInformation("Creating building {BuildingName}", dto.Name);
-        return Ok(building);
+
+        var createdBuilding = await _buildingService.Create(building);
+
+        return Ok(new ApiResponse<Building>
+        {
+            Success = true,
+            Message = "Building created successfully.",
+            Data = createdBuilding
+        });
     }
 
     // Update: api/buildings/1
@@ -80,10 +107,23 @@ public class BuildingsController : ControllerBase
         var result = await _buildingService.Update(id, updated);
 
         if (result == null)
-            return NotFound();
+        {
+            return NotFound(new ApiResponse<Building>
+            {
+                Success = false,
+                Message = "Building not found.",
+                Data = null
+            });
+        }
 
-        _logger.LogInformation("Updating building {BuildingName}", id);
-        return Ok(result);
+        _logger.LogInformation("Updating building {BuildingId}", id);
+
+        return Ok(new ApiResponse<Building>
+        {
+            Success = true,
+            Message = "Building updated successfully.",
+            Data = result
+        });
     }
 
     // Delete: api/buildings/1
@@ -93,8 +133,24 @@ public class BuildingsController : ControllerBase
         var result = await _buildingService.Delete(id);
 
         if (!result)
-            return NotFound();
+        {
+            return NotFound(new ApiResponse<Building>
+            {
+                Success = false,
+                Message = "Building not found.",
+                Data = null
+            });
+        }
 
-        return NoContent();
+        _logger.LogInformation("Deleted building id {BuildingId}", id);
+
+        // return NoContent();
+
+        return Ok(new ApiResponse<bool>
+        {
+            Success = true,
+            Message = "Building deleted successfully.",
+            Data = true
+        });
     }
 }

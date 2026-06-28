@@ -9,8 +9,8 @@ POST {{BuildingManagement_ApiHostAddress}}/api/buildings
 Content-Type: application/json
 
 {
-    "name": "Marvin Gardens",
-    "address": "100 West Street",
+    "name": "Tony Street",
+    "address": "105 Marshall Dr",
     "numberOfUnits": 10
 }
 
