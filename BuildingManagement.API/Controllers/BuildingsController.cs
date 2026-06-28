@@ -27,7 +27,6 @@ public class BuildingsController : ControllerBase
     {
         var buildings = _buildingService.GetAll();
         _logger.LogInformation("Getting all buildings.");
-
         return Ok(buildings);
     }
 

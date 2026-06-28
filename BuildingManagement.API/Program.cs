@@ -2,6 +2,7 @@ using BuildingManagement.API.Interfaces;
 using BuildingManagement.API.Services;
 using Microsoft.EntityFrameworkCore;
 using BuildingManagement.API.Data;
+using BuildingManagement.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseRouting();
+
 
 // Configure middleware
 app.UseHttpsRedirection();
