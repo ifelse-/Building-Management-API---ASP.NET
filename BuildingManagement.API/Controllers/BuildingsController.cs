@@ -28,12 +28,7 @@ public class BuildingsController : ControllerBase
     {
         var result = _buildingService.GetAll();
         _logger.LogInformation("Getting all buildings.");
-        return Ok(new ApiResponse<IEnumerable<Building>>
-        {
-            Success = result.IsSuccess,
-            Message = result.Message,
-            Data = result.Data
-        });
+        return Ok(ApiResponseFactory.Success(result.Data, result.Message));
     }
 
     // GET: api/buildings/1
@@ -44,22 +39,11 @@ public class BuildingsController : ControllerBase
         
         if (!result.IsSuccess)
         {
-            return NotFound(new ApiResponse<Building>
-            {
-                Success = result.IsSuccess,
-                Message = result.Message,
-                Data = null
-            });
+            return NotFound(ApiResponseFactory.Fail<Building>(result.Message));
         }
 
         _logger.LogInformation("Getting building with ID {BuildingId}", id);
-
-        return Ok(new ApiResponse<Building>
-        {
-            Success = result.IsSuccess,
-            Message = result.Message,
-            Data = result.Data
-        });
+        return Ok(ApiResponseFactory.Success(result.Data, result.Message));
 
         //return result.IsSuccess
            // ? Ok(ApiResponse.Success(result.Data, result.Message))
@@ -83,28 +67,15 @@ public class BuildingsController : ControllerBase
             NumberOfUnits = dto.NumberOfUnits
         };
 
-        // await _buildingService.Create(building);
-
         _logger.LogInformation("Creating building {BuildingName}", dto.Name);
 
         var result = await _buildingService.Create(building);
 
         if (!result.IsSuccess)
         {
-            return BadRequest(new ApiResponse<Building>
-            {
-                Success = result.IsSuccess,
-                Message = result.Message,
-                Data = null
-            });
+            return BadRequest(ApiResponseFactory.Fail<Building>(result.Message));
         }
-
-        return Ok(new ApiResponse<Building>
-        {
-            Success = result.IsSuccess,
-            Message = result.Message,
-            Data = result.Data
-        });
+        return Ok(ApiResponseFactory.Success(result.Data, result.Message));
     }
 
     // Update: api/buildings/1
@@ -122,22 +93,11 @@ public class BuildingsController : ControllerBase
 
         if (!result.IsSuccess)
         {
-            return NotFound(new ApiResponse<Building>
-            {
-                Success = result.IsSuccess,
-                Message = result.Message,
-                Data = null
-            });
+            return NotFound(ApiResponseFactory.Fail<Building>(result.Message));
         }
 
         _logger.LogInformation("Updating building {BuildingId}", id);
-
-        return Ok(new ApiResponse<Building>
-        {
-            Success = result.IsSuccess,
-            Message = result.Message,
-            Data = result.Data
-        });
+        return Ok(ApiResponseFactory.Success(result.Data, result.Message));
     }
 
     // Delete: api/buildings/1
@@ -148,23 +108,9 @@ public class BuildingsController : ControllerBase
 
         if (!result.IsSuccess)
         {
-            return NotFound(new ApiResponse<Building>
-            {
-                Success = result.IsSuccess,
-                Message = result.Message,
-                Data = null
-            });
+            return NotFound(ApiResponseFactory.Fail<Building>(result.Message));
         }
-
         _logger.LogInformation("Deleted building id {BuildingId}", id);
-
-        // return NoContent();
-
-        return Ok(new ApiResponse<bool>
-        {
-            Success = result.IsSuccess,
-            Message = result.Message,
-            Data = result.Data
-        });
+        return Ok(ApiResponseFactory.Success(result.Data, result.Message));
     }
 }
